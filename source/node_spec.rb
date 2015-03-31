@@ -18,6 +18,10 @@ describe Node do
       node.add_edge(node2)
       expect(node.nodes.contains?(node2)).to be true
     end
+    it 'Doesn\'t add edge if other_node is itself' do
+      node.add_edge(node)
+      expect(node.nodes.contains?(node)).to be false
+    end
   end
 
   describe '#value' do
