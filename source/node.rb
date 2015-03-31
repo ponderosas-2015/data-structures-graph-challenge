@@ -18,12 +18,10 @@ class Node
 
   def exists?(evaluated_nodes = MySet.new, &block)
     nodes.iterate do |node|
-      if node
-        return false if evaluated_nodes.contains?(node)
-        evaluated_nodes.add(node)
-        return true if yield node.value
-        return true if node.exists?(evaluated_nodes, &block)
-      end
+      return false if evaluated_nodes.contains?(node)
+      evaluated_nodes.add(node)
+      return true if yield node.value
+      return true if node.exists?(evaluated_nodes, &block)
     end
     return false
   end
