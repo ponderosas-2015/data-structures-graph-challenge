@@ -12,30 +12,21 @@ class GraphNode
     @edges.add(other_node)
   end
 
-  def walk(node, visited, &bloc)
-    return true if bloc.call(node)
-    visited.add(node)
-    node.edges.each do |node|
+  def each(visited = MySet.new, &bloc)
+    bloc.call(self)
+    visited.add(self)
+    self.edges.each do |node|
       if !visited.contains?(node)
-        return true if walk(node, visited, &bloc)
+        node.each(visited, &bloc)
       end
+    end
+  end
+
+  def exists?(&bloc)
+    self.each do |node|
+      return true if bloc.call(node)
     end
     false
   end
-
-  # def each(node, visited, &bloc)
-  #   bloc.call(node)
-  #   visited.add(node)
-  #   node.edges.each do |node|
-  #     if !visited.contains?(node)
-  #       return each(node, visited, &bloc)
-  #     end
-  #   end
-  # end
-
-  def exists?(&bloc)
-    visited = MySet.new
-    walk(self, visited, &bloc)
-  end
-
 end
+
