@@ -1,4 +1,5 @@
 require_relative 'node'
+require_relative 'set'
 
 describe Node do
   let(:value) {"hello"}
@@ -15,7 +16,7 @@ describe Node do
   describe '#add_edge(other_node)' do
     it 'Add an edge between this node and other_node' do
       node.add_edge(node2)
-      expect(node.nodes).to eq [node2]
+      expect(node.nodes.contains?(node2)).to be true
     end
   end
 
@@ -28,20 +29,26 @@ describe Node do
   describe '#nodes' do
     it 'Return a collection of nodes to which this node has an outgoing edge' do
       node.add_edge(node2)
-      expect(node.nodes).to eq [node2]
-      expect(node2.nodes).to eq []
+      expect(node.nodes).to be_an_instance_of MySet
+      expect(node.nodes.contains?(node2)).to be true
+      expect(node2.nodes.contains?(node)).to be false
     end
   end
 
   describe '#exists? {|node| }' do
     it 'Return true if the block passes for any of the nodes "downstream" from this one by following graph edges.' do
       node.add_edge(node2)
-      expect{ |b| node.exists(&b) }.to yield_successive_args(value2)
+      expect{ |b| node.exists?(&b) }.to yield_successive_args(value2)
     end
-    it 'Works for a cyclic array?' do
+    it 'Works for a cyclic relation?' do
       node.add_edge(node2)
       node2.add_edge(node)
-      expect{ |b| node.exists(&b) }.to yield_successive_args(value2, value)
+      expect( node.exists? { |val| val == value } ).to be true
+    end
+    it 'Terminates if condition not met in cyclic relation?' do
+      node.add_edge(node2)
+      node2.add_edge(node)
+      expect( node.exists? { |val| val == "dude" } ).to be false
     end
   end
 
