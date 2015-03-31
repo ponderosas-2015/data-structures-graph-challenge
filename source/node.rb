@@ -9,7 +9,7 @@ class Node
   end
 
   def add_edge(node)
-    @edges.add(node)
+    @edges.add(node) unless node == self
   end
 
   def nodes
